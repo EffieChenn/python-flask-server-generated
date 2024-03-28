@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: Fisherman - OpenAPI 3.0
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: https://fisherman/api
+tags:
+- name: capture
+  description: Information about fishing boat catches
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+- name: trip
+  description: Information about Fishing Boat Departures
+  externalDocs:
+    description: Find out more about our store
+    url: http://swagger.io
+- name: species
+  description: Fishing Boat Catch Varieties
+paths:
+  /capture:
+    get:
+      tags:
+      - capture
+      summary: Get all captures
+      operationId: get_all_captures
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/capture'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/capture'
+        "400":
+          description: Invalid supplied
+        "404":
+          description: Capture not found
+        "422":
+          description: Validation exception
+      x-openapi-router-controller: swagger_server.controllers.capture_controller
+    put:
+      tags:
+      - capture
+      summary: Update an existing capture
+      description: Update an existing capture by Id
+      operationId: update_capture
+      requestBody:
+        description: Update an existent capture in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/capture'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/capture'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/capture'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/capture'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/capture'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Capture not found
+        "422":
+          description: Validation exception
+      x-openapi-router-controller: swagger_server.controllers.capture_controller
+    post:
+      tags:
+      - capture
+      summary: Add a new capture
+      description: Add a new capture
+      operationId: add_capture
+      requestBody:
+        description: Create a new capture
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/capture'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/capture'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/capture'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/capture'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/capture'
+        "400":
+          description: Invalid input
+        "422":
+          description: Validation exception
+      x-openapi-router-controller: swagger_server.controllers.capture_controller
+  /capture/{id}:
+    get:
+      tags:
+      - capture
+      summary: Get a capture by ID
+      operationId: capture_id_get
+      parameters:
+      - name: id
+        in: path
+        description: ID of the capture to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Capture retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/capture'
+        "404":
+          description: Capture not found
+        "500":
+          description: Internal server error
+      x-openapi-router-controller: swagger_server.controllers.capture_controller
+    put:
+      tags:
+      - capture
+      summary: Update an existing capture
+      operationId: capture_id_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/capture_update'
+        required: true
+      responses:
+        "200":
+          description: Capture updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/capture_update'
+        "404":
+          description: capture not found
+        "500":
+          description: Internal server error
+      x-openapi-router-controller: swagger_server.controllers.capture_controller
+  /capture/findByCatchDate:
+    get:
+      tags:
+      - capture
+      summary: Finds Captures by Catch Date
+      operationId: find_by_catch_date
+      parameters:
+      - name: catchDate
+        in: query
+        description: CatchDate values that need to be considered for filter
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/capture'
+                x-content-type: application/json
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/capture'
+        "400":
+          description: Invalid catchDate value
+      x-openapi-router-controller: swagger_server.controllers.capture_controller
+  /trip:
+    get:
+      tags:
+      - trip
+      summary: Get all trips
+      operationId: get_all_trips
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/trip'
+                x-content-type: application/json
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/trip'
+        "400":
+          description: Invalid value
+      x-openapi-router-controller: swagger_server.controllers.trip_controller
+    post:
+      tags:
+      - trip
+      summary: Create a new trip
+      operationId: trip_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trip'
+        required: true
+      responses:
+        "201":
+          description: Trip created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trip'
+        "409":
+          description: Trip already exists
+        "500":
+          description: Internal server error
+      x-openapi-router-controller: swagger_server.controllers.trip_controller
+  /trip/{id}:
+    get:
+      tags:
+      - trip
+      summary: Get a trip by ID
+      operationId: trip_id_get
+      parameters:
+      - name: id
+        in: path
+        description: ID of the trip to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Trip retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trip'
+        "404":
+          description: Trip not found
+        "500":
+          description: Internal server error
+      x-openapi-router-controller: swagger_server.controllers.trip_controller
+    put:
+      tags:
+      - trip
+      summary: Update an existing trip
+      operationId: trip_id_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trip_update'
+        required: true
+      responses:
+        "200":
+          description: Trip updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trip_update'
+        "404":
+          description: Trip not found
+        "500":
+          description: Internal server error
+      x-openapi-router-controller: swagger_server.controllers.trip_controller
+    delete:
+      tags:
+      - trip
+      summary: Delete a trip by ID
+      operationId: trip_id_delete
+      parameters:
+      - name: id
+        in: path
+        description: ID of the trip to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Trip deleted successfully
+        "404":
+          description: Trip not found
+        "500":
+          description: Internal server error
+      x-openapi-router-controller: swagger_server.controllers.trip_controller
+components:
+  schemas:
+    ship:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Dogs
+        type:
+          type: string
+          example: Dogs
+        registrationNumber:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        fuelCapacity:
+          type: integer
+      example:
+        purchaseDate: 2000-01-23
+        fuelCapacity: 0
+        registrationNumber: registrationNumber
+        name: Dogs
+        id: 1
+        type: Dogs
+    trip:
+      required:
+      - endDate
+      - isOnLeave
+      - startDate
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        ship:
+          $ref: '#/components/schemas/ship'
+        season:
+          $ref: '#/components/schemas/season'
+      example:
+        endDate: 2000-01-23
+        ship:
+          purchaseDate: 2000-01-23
+          fuelCapacity: 0
+          registrationNumber: registrationNumber
+          name: Dogs
+          id: 1
+          type: Dogs
+        season:
+          name: name
+          description: description
+          id: 10
+        id: 10
+        startDate: 2000-01-23
+    trip_update:
+      required:
+      - endDate
+      - isOnLeave
+      - startDate
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        ship:
+          type: integer
+        season:
+          type: integer
+      example:
+        endDate: 2000-01-23
+        ship: 0
+        season: 6
+        id: 10
+        startDate: 2000-01-23
+    season:
+      required:
+      - description
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+        description:
+          type: string
+      example:
+        name: name
+        description: description
+        id: 10
+    capture:
+      required:
+      - catchDate
+      - quantity
+      - species
+      - trip
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        trip:
+          $ref: '#/components/schemas/trip'
+        catchDate:
+          type: string
+          format: date
+        quantity:
+          type: integer
+      example:
+        trip:
+          endDate: 2000-01-23
+          ship:
+            purchaseDate: 2000-01-23
+            fuelCapacity: 0
+            registrationNumber: registrationNumber
+            name: Dogs
+            id: 1
+            type: Dogs
+          season:
+            name: name
+            description: description
+            id: 10
+          id: 10
+          startDate: 2000-01-23
+        quantity: 6
+        id: 10
+        catchDate: 2000-01-23
+    capture_update:
+      required:
+      - catchDate
+      - quantity
+      - species
+      - trip
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        trip:
+          type: integer
+        catchDate:
+          type: string
+          format: date
+        quantity:
+          type: integer
+      example:
+        trip: 0
+        quantity: 6
+        id: 10
+        catchDate: 2000-01-23
+

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Employee {% endblock %}</h1>
+    {% for employee in employees %}
+        <div class='employee_details'>
+            <h3>#{{ employee[0] }} - {{ employee[1] }}</h3>
+            <i><p>Birthday:{{ employee[2] }}</p></i>
+            <i><p>Address:{{ employee[3] }}</p></i>
+            <i><p>Phone:{{ employee[4] }}</p></i>
+            <i><p>Email:{{ employee[5] }}</p></i>
+            <i><p>Position:{{ employee[6] }}</p></i>
+            <i><p>Salary:{{ employee[7] }}</p></i>
+            <i><p>Active:{{ employee[8] }}</p></i>
+        </div>
+    {% endfor %}
+{% endblock %}
