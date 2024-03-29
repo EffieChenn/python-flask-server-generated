@@ -10,40 +10,39 @@ from ..models.capture import Capture
 
 
 def add_capture(body):  # noqa: E501
-    """Add a new capture
-
-    Add a new capture # noqa: E501
-
-    :param body: Create a new capture
-    :type body: dict | bytes
-
-    :rtype: Capture
-    """
     if connexion.request.is_json:
-        body = Capture.from_dict(connexion.request.get_json())  # noqa: E501
-    return "do some magic!"
+        body = CaptureUpdate.from_dict(connexion.request.get_json())  # noqa: E501
 
+    conn = get_db_connection()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            'INSERT into "Capture" ("tripID", "catchDate","speciesID", "quantity") VALUES (%s,%s, 2, %s) returning "captureID"',
+            (body.trip, body.catch_date, body.quantity),
+        )
+        row = cur.fetchone()
+        id = row[0]
+        conn.commit()
+        cur.close()
 
-def add_capture(id, trip, catch_date, quantity):  # noqa: E501
-    """Add a new capture
+        cur = conn.cursor()
+        cur.execute(
+            'SELECT "captureID", "catchDate", "speciesID", "quantity" FROM "Capture" WHERE "captureID" = %s',
+            (id,),
+        )
+        row = cur.fetchone()
+        updated_capture = Capture(id=row[0], quantity=row[3])
+        return updated_capture
 
-    Add a new capture # noqa: E501
+    except Exception as e:
+        conn.rollback()
+        raise e
 
-    :param id:
-    :type id: int
-    :param trip:
-    :type trip: dict | bytes
-    :param catch_date:
-    :type catch_date: str
-    :param quantity:
-    :type quantity: int
+    finally:
+        cur.close()
+        conn.close()
 
-    :rtype: Capture
-    """
-    if connexion.request.is_json:
-        trip = Trip.from_dict(connexion.request.get_json())  # noqa: E501
-    catch_date = util.deserialize_date(catch_date)
-    return "do some magic!"
+    return ""
 
 
 def capture_id_get(id):  # noqa: E501
@@ -127,32 +126,6 @@ def update_capture(body):  # noqa: E501
 
 
 def update_capture(id, trip, catch_date, quantity):  # noqa: E501
-
-    conn = get_db_connection()
-    try:
-        cur = conn.cursor()
-        cur.execute(
-            'UPDATE "Capture" SET "tripID" = %s, "catchDate" = %s, "quantity" = %s WHERE "captureID" = %s',
-            (trip, catch_date, quantity, id),
-        )
-        conn.commit()
-        cur.close()
-
-        cur = conn.cursor()
-        cur.execute(
-            'SELECT "captureID", "catchDate", "speciesID", "quantity" FROM "Capture" WHERE "captureID" = %s',
-            (id,),
-        )
-        row = cur.fetchone()
-        updated_capture = Capture(id=row[0], quantity=row[3])
-
-    except:
-        conn.rollback()
-    finally:
-        cur.close()
-        conn.close()
-
-    return updated_capture
 
     if connexion.request.is_json:
         trip = Trip.from_dict(connexion.request.get_json())  # noqa: E501

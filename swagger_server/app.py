@@ -1,6 +1,11 @@
 import os
 import psycopg2
+import collections
+
+collections.Callable = collections.abc.Callable
+
 from flask import Flask, render_template, request, url_for, redirect
+
 
 app = Flask(__name__)
 
